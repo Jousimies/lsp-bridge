@@ -464,6 +464,11 @@ you can customize `lsp-bridge-get-project-path-by-filepath' to return project pa
   "In Java, sometimes, we need return same workspace folder for multiple projects,
 you can customize `lsp-bridge-get-workspace-folder' to return workspace folder path by give project path.")
 
+(defcustom lsp-bridge-mode-line t
+  "Whether display LSP-bridge's server info in mode-line ."
+  :type 'boolean
+  :group 'lsp-bridge)
+
 (defvar lsp-bridge-formatting-indent-alist
   '((c-mode                     . c-basic-offset) ; C
     (c++-mode                   . c-basic-offset) ; C++
@@ -1428,6 +1433,10 @@ So we build this macro to restore postion after code format."
     (add-hook (car hook) (cdr hook) nil t))
 
   (advice-add #'acm-hide :after #'lsp-bridge--completion-hide-advisor)
+  
+  (when lsp-bridge-mode-line
+    (add-to-list 'mode-line-misc-info
+                 `(lsp-bridge-mode (" [" lsp-bridge--mode-line-format "] "))))
 
   ;; Flag `lsp-bridge-is-starting' make sure only call `lsp-bridge-start-process' once.
   (unless lsp-bridge-is-starting
